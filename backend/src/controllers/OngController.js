@@ -1,0 +1,29 @@
+const crypto = require('crypto')
+const connection = require('../database/connection') //Importa o módulo criado para conectar ao banco de dados
+
+module.exports = {
+	async create(request, response){
+		
+		const { name, email, whatsapp, city, uf } = request.body
+	
+		const id = crypto.randomBytes(4).toString('HEX') //coando que gera 4 bytes de caracteres hexadecimais para gerar o ID
+		
+		await connection('ongs').insert({ //Insere os dados passados pelo corpo da requisição
+			id,
+			name,
+			email,
+			whatsapp,
+			city,
+			uf
+		})
+		
+		return response.json({ id })
+	},
+	
+	async index(request, response){
+		const ongs = await connection('ongs').select('*')
+	
+		return response.json({ ongs })
+	}
+}
+
